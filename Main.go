@@ -1,6 +1,10 @@
 package main
 
-import "log"
+import (
+	"log"
+
+	"github.com/chamakits/spite/service"
+)
 
 func init() {
 	log.SetFlags(log.Lshortfile)
@@ -26,6 +30,9 @@ func main() {
 	// > Will block root from using.  As currently there is no 'permission' concept, it would be dangerous to run as root.  Should try to block that.
 
 	//TODO Will start service here
+	spiteService := &service.SpiteService{}
+	spiteService.Init()
+
 	//Service methods:
 	//1)Service will get list of tasks.
 	// ->When clicking on a task, you'll get a list of inputs.
