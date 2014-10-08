@@ -11,6 +11,7 @@ import (
 // SpiteService is a service that hosts Spite server.
 // TODO I'll need to handle multipart upload. See here how:
 // http://sanatgersappa.blogspot.com/2013/03/handling-multiple-file-uploads-in-go.html
+// https://www.socketloop.com/tutorials/golang-upload-file
 type SpiteService struct {
 	Port           int
 	taskController task.TaskController
@@ -29,6 +30,7 @@ func (spiteService *SpiteService) Init() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/hello/", acceptCors(helloHandler(spiteService)))
+	r.HandleFunc("//", acceptCors(helloHandler(spiteService)))
 
 	spiteService.initHTTP(r)
 

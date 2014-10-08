@@ -1,8 +1,16 @@
 package task
 
-type TaskController interface {
-	GetTasksView() []View
-	GetTaskDetail(taskView View) Task
-	GetTaskHistory(taskView View) []RunInstance
+type TaskController struct {
+
 	// AddT
+}
+
+func (taskCongtroller *TaskController) GetTasksView() []View {
+	panic("")
+}
+func (taskCongtroller *TaskController) GetTaskDetail(taskView View) Task {
+	panic("")
+}
+func (taskCongtroller *TaskController) GetTaskHistory(taskView View) []RunInstance {
+	panic("")
 }

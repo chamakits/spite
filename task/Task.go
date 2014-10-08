@@ -1,6 +1,10 @@
 package task
 
-import "time"
+import (
+	"time"
+
+	"github.com/chamakits/spite/task"
+)
 
 // View is used to represent a simple high level view of a Task.
 type View struct {
@@ -17,13 +21,19 @@ type Schema struct {
 
 // Data contains the data of a Task.  Pretty much the HTTP post info.
 type Data struct {
-	fieldNameToValue map[string][]byte
+	fieldNameToValue map[string][]string
 }
 
 // Task is used to represent a task, including schema and data.
 type Task struct {
 	View
 	Schema
+}
+
+//TaskAndData is used mostly to retrieve the data from the Post request made.
+type TaskAndData struct {
+	Task task.Task `json:"task"`
+	Data task.Data `json:"data"`
 }
 
 // RunInstance is used to represent a single instance of a running of a task.
