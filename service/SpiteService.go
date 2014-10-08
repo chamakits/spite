@@ -8,6 +8,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// SpiteService is a service that hosts Spite server.
+// TODO I'll need to handle multipart upload. See here how:
+// http://sanatgersappa.blogspot.com/2013/03/handling-multiple-file-uploads-in-go.html
 type SpiteService struct {
 	Port           int
 	taskController task.TaskController
