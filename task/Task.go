@@ -8,20 +8,20 @@ import (
 
 // View is used to represent a simple high level view of a Task.
 type View struct {
-	ID          int
-	Name        string
-	Description string
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 // Schema is used to represent what data a Task contains.
 type Schema struct {
 	// TODO probably need to rethink this.
-	fieldNameToDataType map[string]string
+	fieldNameToDataType map[string]string `json:"nameToType"`
 }
 
 // Data contains the data of a Task.  Pretty much the HTTP post info.
 type Data struct {
-	fieldNameToValue map[string][]string
+	fieldNameToValue map[string]string `json:"nameToValue"`
 }
 
 // Task is used to represent a task, including schema and data.
