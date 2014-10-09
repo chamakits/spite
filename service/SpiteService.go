@@ -1,7 +1,10 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/chamakits/spite/task"
@@ -30,7 +33,8 @@ func (spiteService *SpiteService) Init() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/hello/", acceptCors(helloHandler(spiteService)))
-	r.HandleFunc("//", acceptCors(helloHandler(spiteService)))
+	r.HandleFunc("/api/add-task", acceptCors(addTaskHandler(spiteService)))
+	// r.HandleFunc("/api/add-task", acceptCors(addTaskHandler_STRING(spiteService)))
 
 	spiteService.initHTTP(r)
 
@@ -49,17 +53,56 @@ func corsEnable(w *http.ResponseWriter) {
 
 func acceptCors(handlerFunction http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
+		log.Printf("Method called:%v\n", req.Method)
 		if "OPTIONS" == req.Method {
 			corsEnable(&response)
+			for key, value := range response.Header() {
+				fmt.Printf("Key:%v, Value:%v\n", key, value)
+			}
+			return
 		} else {
 			handlerFunction(response, req)
 		}
 	}
 }
 
+func addTaskHandler_STRING(spiteService *SpiteService) http.HandlerFunc {
+	return func(response http.ResponseWriter, req *http.Request) {
+		bytes, error := ioutil.ReadAll(req.Body)
+		if error != nil {
+			fmt.Println("Error")
+			log.Fatal(error)
+		}
+		result := string(bytes)
+		log.Printf("From req directly:%v\n", result)
+	}
+}
+
+func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
+	return func(response http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		var taskAndData task.TaskAndData
+		err := decoder.Decode(&taskAndData)
+		if err != nil {
+			log.Fatalf("Problem reading content of body:%v\n", err)
+		}
+		// log.Printf("Task and data read:%v\n", taskAndData)
+		// log.Printf("Just data:%v\n", taskAndData.Data)
+
+		// b, err := json.Marshal(taskAndData)
+		// if err != nil {
+		// 	log.Fatalf("Errored out with:%v\n", err)
+		// }
+		// fmt.Fprintf(response, string(b))
+		fmt.Fprintf(response, "Success reply!")
+
+	}
+}
+
 func helloHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(response, "Hello!")
+		log.Printf("Hello handler!.")
 	}
 }
 
