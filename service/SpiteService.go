@@ -54,11 +54,8 @@ func corsEnable(w *http.ResponseWriter) {
 func acceptCors(handlerFunction http.HandlerFunc) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		log.Printf("Method called:%v\n", req.Method)
+		corsEnable(&response)
 		if "OPTIONS" == req.Method {
-			corsEnable(&response)
-			for key, value := range response.Header() {
-				fmt.Printf("Key:%v, Value:%v\n", key, value)
-			}
 			return
 		} else {
 			handlerFunction(response, req)
