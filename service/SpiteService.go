@@ -85,6 +85,7 @@ func runTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 			log.Fatalf("Problem reading content of body:%v\n", err)
 		}
 		log.Printf("Received data:%v\n", data)
+		fmt.Fprintf(response, "Success reply!")
 	}
 }
 
