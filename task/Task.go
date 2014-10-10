@@ -26,16 +26,13 @@ type Task struct {
 	Schema
 }
 
-// type Task struct {
-// 	fieldNameToValue map[string]string `json:"nameToData"`
-// 	ID               int               `json:"id"`
-// 	Name             string            `json:"name"`
-// 	Description      string            `json:"description"`
-// }
-
 //TaskAndData is used mostly to retrieve the data from the Post request made.
 type TaskAndData struct {
 	Task Task `json:"task"`
+	Data Data `json:"data"`
+}
+
+type DataHttp struct {
 	Data Data `json:"data"`
 }
 

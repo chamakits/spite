@@ -34,6 +34,7 @@ func (spiteService *SpiteService) Init() {
 	r := mux.NewRouter()
 	r.HandleFunc("/hello/", acceptCors(helloHandler(spiteService)))
 	r.HandleFunc("/api/add-task", acceptCors(addTaskHandler(spiteService)))
+	r.HandleFunc("/api/run-task", acceptCors(runTaskHandler(spiteService)))
 	// r.HandleFunc("/api/add-task", acceptCors(addTaskHandler_STRING(spiteService)))
 
 	spiteService.initHTTP(r)
@@ -75,6 +76,18 @@ func addTaskHandler_STRING(spiteService *SpiteService) http.HandlerFunc {
 	}
 }
 
+func runTaskHandler(spiteService *SpiteService) http.HandlerFunc {
+	return func(response http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		var data task.DataHttp
+		err := decoder.Decode(&data)
+		if err != nil {
+			log.Fatalf("Problem reading content of body:%v\n", err)
+		}
+		log.Printf("Received data:%v\n", data)
+	}
+}
+
 func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		decoder := json.NewDecoder(req.Body)
@@ -83,14 +96,7 @@ func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)
 		}
-		// log.Printf("Task and data read:%v\n", taskAndData)
-		// log.Printf("Just data:%v\n", taskAndData.Data)
 
-		// b, err := json.Marshal(taskAndData)
-		// if err != nil {
-		// 	log.Fatalf("Errored out with:%v\n", err)
-		// }
-		// fmt.Fprintf(response, string(b))
 		fmt.Fprintf(response, "Success reply!")
 
 	}
