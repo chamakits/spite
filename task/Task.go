@@ -26,6 +26,10 @@ type Task struct {
 	Schema
 }
 
+type TaskHttp struct {
+	Task Task `json:"task"`
+}
+
 //TaskAndData is used mostly to retrieve the data from the Post request made.
 type TaskAndData struct {
 	Task Task `json:"task"`
