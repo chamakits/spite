@@ -1,16 +1,20 @@
 package task
 
-type TaskController struct {
-
-	// AddT
+type Controller struct {
+	Dao Dao
 }
 
-func (taskCongtroller *TaskController) GetTasksView() []View {
-	panic("")
+func NewController(dao Dao) *Controller {
+	return &Controller{dao}
 }
-func (taskCongtroller *TaskController) GetTaskDetail(taskView View) Task {
-	panic("")
+
+func (taskController *Controller) GetTasksView() []View {
+	return taskController.Dao.GetTasksView()
 }
-func (taskCongtroller *TaskController) GetTaskHistory(taskView View) []RunInstance {
-	panic("")
+func (taskController *Controller) GetTaskDetail(taskView View) Task {
+	return taskController.Dao.GetTaskDetail(taskView)
+}
+func (taskController *Controller) GetTaskHistory(taskView View) []RunInstance {
+	return taskController.Dao.GetTaskHistory(taskView)
+
 }

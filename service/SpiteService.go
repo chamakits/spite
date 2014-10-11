@@ -17,7 +17,7 @@ import (
 // https://www.socketloop.com/tutorials/golang-upload-file
 type SpiteService struct {
 	Port           int
-	taskController task.TaskController
+	taskController task.Controller
 }
 
 func (spiteService *SpiteService) Init() {
