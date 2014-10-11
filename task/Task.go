@@ -52,6 +52,5 @@ type DataHttp struct {
 type RunInstance struct {
 	StartTime time.Time
 	EndTime   time.Time
-	Task      Task
 	Data      Data
 }
