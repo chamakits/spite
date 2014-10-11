@@ -30,6 +30,24 @@ func (taskSelf *Task) Run(data Data) {
 
 }
 
+func NewTask(id int, name, description string) *Task {
+	newTask := &Task{
+		View: View{
+			ID:          id,
+			Name:        name,
+			Description: description,
+		},
+		Schema: Schema{
+			FieldNameToDataType: make(map[string]string, 0),
+		},
+	}
+	return newTask
+}
+
+func (taskSelf *Task) AddSchemaField(name, dataType string) {
+	taskSelf.FieldNameToDataType[name] = dataType
+}
+
 func (taskSelf Task) CopyView() View {
 	return View{
 		ID:          taskSelf.ID,

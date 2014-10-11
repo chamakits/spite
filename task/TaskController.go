@@ -19,6 +19,11 @@ func (taskController *Controller) GetTaskDetail(taskView View) Task {
 func (taskController *Controller) GetTaskHistory(taskView View) []RunInstance {
 	return taskController.Dao.GetTaskHistory(taskView)
 }
+
+func (taskController *Controller) AddTask(taskIn Task) {
+	taskController.Dao.AddTask(taskIn)
+}
+
 func (taskController *Controller) RunTask(taskView View, data Data) {
 	startTime := time.Now()
 	taskFound := taskController.GetTaskDetail(taskView)
