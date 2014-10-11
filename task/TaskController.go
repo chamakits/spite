@@ -25,6 +25,13 @@ func (taskController *Controller) RunTask(taskView View, data Data) {
 	taskFound.Run(data)
 
 	endTime := time.Now()
-	taskController.Dao.AddTaskRun(taskFound.Name, data, startTime, endTime)
+
+	newRunInstance := RunInstance{
+		StartTime: startTime,
+		EndTime:   endTime,
+		Data:      data,
+	}
+
+	taskController.Dao.AddTaskRun(taskFound.Name, newRunInstance)
 
 }

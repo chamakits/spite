@@ -1,7 +1,5 @@
 package task
 
-import "time"
-
 // Dao is the interface for all TaskDaos.
 type Dao interface {
 	GetTasksView() []View
@@ -9,8 +7,7 @@ type Dao interface {
 	GetTaskHistory(View) []RunInstance
 	AddTask(Task)
 	// AddRunInstance(RunInstance)
-	AddTaskRun(
-		taskName string, data Data, startTime time.Time, endTime time.Time)
+	AddTaskRun(taskName string, newRunInstance RunInstance)
 }
 
 // TaskDataRuns is a struct that contains a task along with its run instances.
@@ -51,14 +48,10 @@ func (dao *MapStoreDao) AddTask(taskIn Task) {
 }
 
 func (dao *MapStoreDao) AddTaskRun(
-	taskName string, data Data, startTime time.Time, endTime time.Time) {
+	taskName string, newRunInstance RunInstance) {
 	// startTime := time.Now()
 	// dao.Store[view.Name].
-	newRunInstance := RunInstance{
-		StartTime: startTime,
-		EndTime:   endTime,
-		Data:      data,
-	}
+
 	runInstances := append(
 		dao.Store[taskName].RunInstances,
 		newRunInstance,
