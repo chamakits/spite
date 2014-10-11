@@ -26,6 +26,14 @@ type Task struct {
 	Schema
 }
 
+func (taskSelf Task) CopyView() View {
+	return View{
+		ID:          taskSelf.ID,
+		Name:        taskSelf.Name,
+		Description: taskSelf.Description,
+	}
+}
+
 type TaskHttp struct {
 	Task Task `json:"task"`
 }
