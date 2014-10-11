@@ -26,6 +26,10 @@ type Task struct {
 	Schema
 }
 
+func (taskSelf *Task) Run(data Data) {
+
+}
+
 func (taskSelf Task) CopyView() View {
 	return View{
 		ID:          taskSelf.ID,

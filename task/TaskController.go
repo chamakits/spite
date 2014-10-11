@@ -1,5 +1,7 @@
 package task
 
+import "time"
+
 type Controller struct {
 	Dao Dao
 }
@@ -16,5 +18,13 @@ func (taskController *Controller) GetTaskDetail(taskView View) Task {
 }
 func (taskController *Controller) GetTaskHistory(taskView View) []RunInstance {
 	return taskController.Dao.GetTaskHistory(taskView)
+}
+func (taskController *Controller) RunTask(taskView View, data Data) {
+	startTime := time.Now()
+	taskFound := taskController.GetTaskDetail(taskView)
+	taskFound.Run(data)
+
+	endTime := time.Now()
+	taskController.Dao.AddTaskRun(taskFound.Name, data, startTime, endTime)
 
 }

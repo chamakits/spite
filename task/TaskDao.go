@@ -1,13 +1,19 @@
 package task
 
+import "time"
+
+// Dao is the interface for all TaskDaos.
 type Dao interface {
 	GetTasksView() []View
 	GetTaskDetail(View) Task
 	GetTaskHistory(View) []RunInstance
 	AddTask(Task)
-	AddRunInstance(RunInstance)
+	// AddRunInstance(RunInstance)
+	AddTaskRun(
+		taskName string, data Data, startTime time.Time, endTime time.Time)
 }
 
+// TaskDataRuns is a struct that contains a task along with its run instances.
 type TaskDataRuns struct {
 	Task         Task
 	RunInstances []RunInstance
@@ -15,9 +21,10 @@ type TaskDataRuns struct {
 
 //This is EXTREMELY not thread safe right now.
 type MapStoreDao struct {
-	Store map[string]TaskDataRuns
+	Store map[string]*TaskDataRuns
 }
 
+// GetTasksView returns a small view of all the tasks.
 func (dao *MapStoreDao) GetTasksView() []View {
 	views := make([]View, len(dao.Store))
 	counter := 0
@@ -37,9 +44,24 @@ func (dao *MapStoreDao) GetTaskHistory(view View) []RunInstance {
 }
 
 func (dao *MapStoreDao) AddTask(taskIn Task) {
-	dao.Store[taskIn.Name] = TaskDataRuns{
+	dao.Store[taskIn.Name] = &TaskDataRuns{
 		Task:         taskIn,
 		RunInstances: make([]RunInstance, 0),
 	}
+}
 
+func (dao *MapStoreDao) AddTaskRun(
+	taskName string, data Data, startTime time.Time, endTime time.Time) {
+	// startTime := time.Now()
+	// dao.Store[view.Name].
+	newRunInstance := RunInstance{
+		StartTime: startTime,
+		EndTime:   endTime,
+		Data:      data,
+	}
+	runInstances := append(
+		dao.Store[taskName].RunInstances,
+		newRunInstance,
+	)
+	dao.Store[taskName].RunInstances = runInstances
 }
