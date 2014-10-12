@@ -64,7 +64,7 @@ func acceptCors(handlerFunction http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func addTaskHandler_STRING(spiteService *SpiteService) http.HandlerFunc {
+func addTaskHandlerSTRING(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		bytes, error := ioutil.ReadAll(req.Body)
 		if error != nil {
@@ -79,7 +79,7 @@ func addTaskHandler_STRING(spiteService *SpiteService) http.HandlerFunc {
 func runTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		decoder := json.NewDecoder(req.Body)
-		var data task.DataHttp
+		var data task.DataHTTP
 		err := decoder.Decode(&data)
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)
@@ -92,7 +92,7 @@ func runTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		decoder := json.NewDecoder(req.Body)
-		var task task.TaskHttp
+		var task task.TaskHTTP
 		err := decoder.Decode(&task)
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)

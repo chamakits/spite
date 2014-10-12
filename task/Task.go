@@ -1,6 +1,14 @@
 package task
 
-import "time"
+import (
+	"errors"
+	"path/filepath"
+	"regexp"
+	"time"
+)
+
+// TODO Should be configurable per process, but hardcoding it for now.
+const LIMIT_PATH string = "c:/go_tmp"
 
 // View is used to represent a simple high level view of a Task.
 type View struct {
@@ -20,16 +28,58 @@ type Data struct {
 	FieldNameToValue map[string]string `json:"nameToData"`
 }
 
+type process struct {
+	ExecutablePath string
+	Flags          []string
+	// Put this in here so that I can specify a path limit for the actual executable
+	// to not be found outside a certain bound.
+	// THIS IS NOT A HUGE SECURITY BOOST. But it Should mitigate SOME
+	pathLimit string
+	// init      bool
+}
+
+func newProcess(path string, flags []string) (*process, error) {
+	// Make path absolute
+	absoluteFilePath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the absolute path is still within the limited file path.
+	re := regexp.MustCompile("^" + LIMIT_PATH)
+	matchesPathLimit := re.FindStringSubmatch(absoluteFilePath)
+	if matchesPathLimit == nil {
+		return nil, errors.New("Executable given is off limited scope.")
+	}
+
+	// Check if executable file exists
+
+	// Check if executable file is actually executable
+
+	return &process{
+		ExecutablePath: absoluteFilePath,
+		Flags:          flags,
+		pathLimit:      LIMIT_PATH,
+	}, nil
+}
+
+func (proc *process) runProcess(data Data) {
+
+}
+
 // Task is used to represent a task, including schema and data.
 type Task struct {
 	View
 	Schema
+	process
 }
 
+// Run method runs the task as specified with the data given.
 func (taskSelf *Task) Run(data Data) {
-
+	taskSelf.runProcess(data)
 }
 
+// NewTask creates a new task with name and description
 func NewTask(id int, name, description string) *Task {
 	newTask := &Task{
 		View: View{
@@ -44,10 +94,12 @@ func NewTask(id int, name, description string) *Task {
 	return newTask
 }
 
+// AddSchemaField adds detail to the schema.
 func (taskSelf *Task) AddSchemaField(name, dataType string) {
 	taskSelf.FieldNameToDataType[name] = dataType
 }
 
+// CopyView copies the view from the task.
 func (taskSelf Task) CopyView() View {
 	return View{
 		ID:          taskSelf.ID,
@@ -56,7 +108,9 @@ func (taskSelf Task) CopyView() View {
 	}
 }
 
-type TaskHttp struct {
+// TaskHTTP is a 'task' just wrapped as one field to be used by http to send it
+// as json over the wire.
+type TaskHTTP struct {
 	Task Task `json:"task"`
 }
 
@@ -66,7 +120,8 @@ type TaskAndData struct {
 	Data Data `json:"data"`
 }
 
-type DataHttp struct {
+// DataHTTP used to wrap Data to be sent as json over the wire.
+type DataHTTP struct {
 	Data Data `json:"data"`
 }
 
