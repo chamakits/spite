@@ -1,9 +1,12 @@
 package task
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"time"
@@ -32,7 +35,7 @@ type Data struct {
 
 type process struct {
 	ExecutablePath string
-	Flags          []string
+	Arguments      []string
 	// Put this in here so that I can specify a path limit for the actual executable
 	// to not be found outside a certain bound.
 	// THIS IS NOT A HUGE SECURITY BOOST. But it Should mitigate SOME
@@ -40,7 +43,7 @@ type process struct {
 	// init      bool
 }
 
-func newProcess(path string, flags []string) (*process, error) {
+func newProcess(path string, arguments []string) (*process, error) {
 	// Make path absolute
 	absoluteFilePath, err := filepath.Abs(path)
 	if err != nil {
@@ -71,13 +74,22 @@ func newProcess(path string, flags []string) (*process, error) {
 
 	return &process{
 		ExecutablePath: absoluteFilePath,
-		Flags:          flags,
+		Arguments:      arguments,
 		pathLimit:      LIMIT_PATH,
 	}, nil
 }
 
 func (proc *process) runProcess(data Data) {
+	command := exec.Command(proc.ExecutablePath, proc.Arguments...)
 
+	var buff bytes.Buffer
+	command.Stdout = &buff
+
+	err := command.Run()
+	if err != nil {
+		//TODO Do actual handling of this.
+		log.Fatalf("Error running process.  Error:%v\n", err)
+	}
 }
 
 // Task is used to represent a task, including schema and data.
