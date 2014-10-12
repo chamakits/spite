@@ -2,6 +2,8 @@ package task
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"path/filepath"
 	"regexp"
 	"time"
@@ -53,8 +55,19 @@ func newProcess(path string, flags []string) (*process, error) {
 	}
 
 	// Check if executable file exists
+	fileInfo, err := os.Stat(absoluteFilePath)
+	if os.IsNotExist(err) {
+		return nil,
+			errors.New(fmt.Sprintf("No such file or directory: %s", absoluteFilePath))
+	}
 
 	// Check if executable file is actually executable
+	// fmt.Print(fileInfo)
+	mode := fileInfo.Mode().Perm()
+	if mode|0111 == 0 {
+		return nil,
+			errors.New(fmt.Sprintf("File '%s' is not an executable file", absoluteFilePath))
+	}
 
 	return &process{
 		ExecutablePath: absoluteFilePath,
