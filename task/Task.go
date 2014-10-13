@@ -27,6 +27,7 @@ func init() {
 	var err error
 	ABS_LIMIT_PATH, err = filepath.Abs(LIMIT_PATH)
 	// ABS_LIMIT_PATH = strings.Replace(ABS_LIMIT_PATH, `\`, `\\`, -1)
+	//TODO Make OS check here.
 	ABS_LIMIT_PATH = makePathWindowsFriendly(ABS_LIMIT_PATH)
 	if err != nil {
 		log.Fatalf("Failed ")
