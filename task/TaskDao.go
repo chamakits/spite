@@ -2,7 +2,7 @@ package task
 
 // Dao is the interface for all TaskDaos.
 type Dao interface {
-	GetTasksView() []View
+	GetTasksViews() []View
 	GetTaskDetail(View) Task
 	GetTaskHistory(View) []RunInstance
 	AddTask(Task)
@@ -22,7 +22,7 @@ type MapStoreDao struct {
 }
 
 // GetTasksView returns a small view of all the tasks.
-func (dao *MapStoreDao) GetTasksView() []View {
+func (dao *MapStoreDao) GetTasksViews() []View {
 	views := make([]View, len(dao.Store))
 	counter := 0
 	for _, value := range dao.Store {

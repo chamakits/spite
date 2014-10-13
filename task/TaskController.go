@@ -10,8 +10,8 @@ func NewController(dao Dao) *Controller {
 	return &Controller{dao}
 }
 
-func (taskController *Controller) GetTasksView() []View {
-	return taskController.Dao.GetTasksView()
+func (taskController *Controller) GetTasksViews() []View {
+	return taskController.Dao.GetTasksViews()
 }
 func (taskController *Controller) GetTaskDetail(taskView View) Task {
 	return taskController.Dao.GetTaskDetail(taskView)
