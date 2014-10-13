@@ -9,11 +9,31 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"time"
 )
 
 // TODO Should be configurable per process, but hardcoding it for now.
-const LIMIT_PATH string = "c:/go_tmp"
+
+const LIMIT_PATH = "C:/"
+
+var ABS_LIMIT_PATH string
+
+func makePathWindowsFriendly(pathIn string) string {
+	return strings.Replace(pathIn, `\`, `\\`, -1)
+}
+
+func init() {
+	var err error
+	ABS_LIMIT_PATH, err = filepath.Abs(LIMIT_PATH)
+	// ABS_LIMIT_PATH = strings.Replace(ABS_LIMIT_PATH, `\`, `\\`, -1)
+	ABS_LIMIT_PATH = makePathWindowsFriendly(ABS_LIMIT_PATH)
+	if err != nil {
+		log.Fatalf("Failed ")
+	}
+}
+
+// const LIMIT_PATH, ERROR_LIMIT_PATH = filepath.Abs("c:/go_tmp")
 
 // View is used to represent a simple high level view of a Task.
 type View struct {
@@ -49,13 +69,18 @@ func newProcess(path string, arguments []string) (*process, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("Found file absolute path.")
 
 	// Check if the absolute path is still within the limited file path.
-	re := regexp.MustCompile("^" + LIMIT_PATH)
+	absoluteFilePath = makePathWindowsFriendly(absoluteFilePath)
+	re := regexp.MustCompile("^" + ABS_LIMIT_PATH)
 	matchesPathLimit := re.FindStringSubmatch(absoluteFilePath)
 	if matchesPathLimit == nil {
-		return nil, errors.New("Executable given is off limited scope.")
+		return nil, errors.New(fmt.Sprintf(
+			"Executable given is off limited scope. Scope '%v', Given '%v'\n",
+			ABS_LIMIT_PATH, absoluteFilePath))
 	}
+	log.Println("File for task within limited file path.")
 
 	// Check if executable file exists
 	fileInfo, err := os.Stat(absoluteFilePath)
@@ -63,6 +88,7 @@ func newProcess(path string, arguments []string) (*process, error) {
 		return nil,
 			errors.New(fmt.Sprintf("No such file or directory: %s", absoluteFilePath))
 	}
+	log.Println("File exists.")
 
 	// Check if executable file is actually executable
 	// fmt.Print(fileInfo)
@@ -71,15 +97,17 @@ func newProcess(path string, arguments []string) (*process, error) {
 		return nil,
 			errors.New(fmt.Sprintf("File '%s' is not an executable file", absoluteFilePath))
 	}
+	log.Println("File is executable.")
 
 	return &process{
 		ExecutablePath: absoluteFilePath,
 		Arguments:      arguments,
-		pathLimit:      LIMIT_PATH,
+		pathLimit:      ABS_LIMIT_PATH,
 	}, nil
 }
 
-func (proc *process) runProcess(data Data) {
+func (proc *process) runProcess(data Data) bytes.Buffer {
+	log.Printf("Proc:%v\n", proc)
 	command := exec.Command(proc.ExecutablePath, proc.Arguments...)
 
 	var buff bytes.Buffer
@@ -90,18 +118,19 @@ func (proc *process) runProcess(data Data) {
 		//TODO Do actual handling of this.
 		log.Fatalf("Error running process.  Error:%v\n", err)
 	}
+	return buff
 }
 
 // Task is used to represent a task, including schema and data.
 type Task struct {
 	View
 	Schema
-	process
+	proc *process
 }
 
 // Run method runs the task as specified with the data given.
-func (taskSelf *Task) Run(data Data) {
-	taskSelf.runProcess(data)
+func (taskSelf *Task) Run(data Data) bytes.Buffer {
+	return taskSelf.proc.runProcess(data)
 }
 
 // NewTask creates a new task with name and description
@@ -117,6 +146,14 @@ func NewTask(id int, name, description string) *Task {
 		},
 	}
 	return newTask
+}
+
+func (selfTask *Task) SetTaskProcess(path string, arguments []string) error {
+	// selfTask.proc = newProcess(path)
+	proc, err := newProcess(path, arguments)
+	log.Printf("New proc created:%v\n", proc)
+	selfTask.proc = proc
+	return err
 }
 
 // AddSchemaField adds detail to the schema.
