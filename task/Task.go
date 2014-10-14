@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -64,6 +65,14 @@ type process struct {
 	// init      bool
 }
 
+//TODO This will probably need to change.  Realistically, its best to just
+//not include this in the scope of the program for now.
+func checkIfExecutableIsInAllowedScope(absoluteFilePath string) bool {
+	re := regexp.MustCompile("^" + ABS_LIMIT_PATH)
+	matchesPathLimit := re.FindStringSubmatch(absoluteFilePath)
+	return matchesPathLimit == nil
+}
+
 func newProcess(path string, arguments []string) (*process, error) {
 	// Make path absolute
 	absoluteFilePath, err := filepath.Abs(path)
@@ -73,10 +82,11 @@ func newProcess(path string, arguments []string) (*process, error) {
 	log.Println("Found file absolute path.")
 
 	// Check if the absolute path is still within the limited file path.
-	absoluteFilePath = makePathWindowsFriendly(absoluteFilePath)
-	re := regexp.MustCompile("^" + ABS_LIMIT_PATH)
-	matchesPathLimit := re.FindStringSubmatch(absoluteFilePath)
-	if matchesPathLimit == nil {
+	if runtime.GOOS == "windows" {
+		absoluteFilePath = makePathWindowsFriendly(absoluteFilePath)
+	}
+	matchesPathLimit := checkIfExecutableIsInAllowedScope(absoluteFilePath)
+	if matchesPathLimit {
 		return nil, errors.New(fmt.Sprintf(
 			"Executable given is off limited scope. Scope '%v', Given '%v'\n",
 			ABS_LIMIT_PATH, absoluteFilePath))
