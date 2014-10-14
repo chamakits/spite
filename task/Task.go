@@ -65,6 +65,24 @@ type process struct {
 	// init      bool
 }
 
+func (proc *process) Equals(procOther *process) bool {
+	return proc.ExecutablePath == procOther.ExecutablePath &&
+		compareProcArguments(proc.Arguments, procOther.Arguments) &&
+		proc.pathLimit == proc.pathLimit
+}
+
+func compareProcArguments(procLeft, procRight []string) bool {
+	if len(procLeft) != len(procRight) {
+		return false
+	}
+	for counter, _ := range procLeft {
+		if procLeft[counter] != procRight[counter] {
+			return false
+		}
+	}
+	return true
+}
+
 //TODO This will probably need to change.  Realistically, its best to just
 //not include this in the scope of the program for now.
 func checkIfExecutableIsInAllowedScope(absoluteFilePath string) bool {
@@ -137,6 +155,13 @@ type Task struct {
 	View
 	Schema
 	proc *process
+}
+
+func (taskSelf *Task) Equals(taskOther *Task) bool {
+	return taskSelf.ID == taskOther.ID &&
+		taskSelf.Name == taskOther.Name &&
+		taskSelf.Description == taskOther.Description &&
+		taskSelf.proc.Equals(taskOther.proc)
 }
 
 // Run method runs the task as specified with the data given.

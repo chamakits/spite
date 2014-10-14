@@ -74,4 +74,6 @@ func TestGetTaskDetails(t *testing.T) {
 		t.Errorf("Task retrieved is not the expected one. As created '%v' as retrieved '%v'\n",
 			newTask, taskWithDetails)
 	}
+
+	t.Logf("Created and retrieved task succesfully by view.")
 }
