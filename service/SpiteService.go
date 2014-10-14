@@ -35,7 +35,8 @@ func (spiteService *SpiteService) Init() {
 	r.HandleFunc("/hello/", acceptCors(helloHandler(spiteService)))
 	r.HandleFunc("/api/add-task", acceptCors(addTaskHandler(spiteService)))
 	r.HandleFunc("/api/run-task", acceptCors(runTaskHandler(spiteService)))
-	// r.HandleFunc("/api/add-task", acceptCors(addTaskHandler_STRING(spiteService)))
+	// TODO need to create a new handler function for showing tasks
+	r.HandleFunc("/api/show-task", acceptCors(runTaskHandler(spiteService)))
 
 	spiteService.initHTTP(r)
 
