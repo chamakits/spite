@@ -50,6 +50,20 @@ type Schema struct {
 	FieldNameToDataType map[string]string `json:"nameToType"`
 }
 
+func equalsMapsStringString(leftMap, rightMap map[string]string) bool {
+	if len(leftMap) != len(rightMap) {
+		return false
+	}
+
+	for counter, _ := range leftMap {
+		if leftMap[counter] != rightMap[counter] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Data contains the data of a Task.  Pretty much the HTTP post info.
 type Data struct {
 	FieldNameToValue map[string]string `json:"nameToData"`
@@ -161,6 +175,7 @@ func (taskSelf *Task) Equals(taskOther *Task) bool {
 	return taskSelf.ID == taskOther.ID &&
 		taskSelf.Name == taskOther.Name &&
 		taskSelf.Description == taskOther.Description &&
+		equalsMapsStringString(taskSelf.FieldNameToDataType, taskOther.FieldNameToDataType) &&
 		//TODO add equality for maps in schema.
 		taskSelf.proc.Equals(taskOther.proc)
 }
