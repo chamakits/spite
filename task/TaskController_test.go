@@ -1,8 +1,8 @@
 package task
 
 import (
-	"fmt"
 	"log"
+	"strings"
 	"testing"
 )
 
@@ -37,16 +37,22 @@ func TestSetAndRunTask(t *testing.T) {
 	taskName := "NewTaskName"
 	newTask := NewTask(0, taskName, "NewTaskDescription")
 	// err := newTask.SetTaskProcess(`C:\Windows\System32\cmd.exe`, []string{`/C`, `"ls"`})
-	err := newTask.SetTaskProcess(`C:\cygwin64\bin\echo.exe`, []string{`some string`})
+	echoString := `some string`
+	err := newTask.SetTaskProcess(`C:\cygwin64\bin\echo.exe`, []string{echoString})
 	if err != nil {
 		t.Errorf("Could not create new task process.  Error:%v\n", err)
 		log.Fatalf("Test failed with error:%v\n", err)
 	}
 	log.Printf("New task proc%v\n", newTask.proc)
 	buff := newTask.Run(Data{})
-	fmt.Printf("Ran command.  Buff out is:%v\n", buff.String())
+	buffString := buff.String()
+
+	if !strings.Contains(buffString, echoString) {
+		t.Errorf("Command ran, but buffer output not as expected. Found '%v' expected '%v'",
+			buffString, echoString)
+	}
 	//TODO Check result of running and compare
-	t.Logf("Able to set and run task.\n")
+	t.Logf("Able to set and run task, and get string result of process 'stdout'.\n")
 }
 
 func TestGetTaskDetails(t *testing.T) {
