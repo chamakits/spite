@@ -161,6 +161,7 @@ func (taskSelf *Task) Equals(taskOther *Task) bool {
 	return taskSelf.ID == taskOther.ID &&
 		taskSelf.Name == taskOther.Name &&
 		taskSelf.Description == taskOther.Description &&
+		//TODO add equality for maps in schema.
 		taskSelf.proc.Equals(taskOther.proc)
 }
 
