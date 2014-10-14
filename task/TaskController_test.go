@@ -45,4 +45,33 @@ func TestSetAndRunTask(t *testing.T) {
 	log.Printf("New task proc%v\n", newTask.proc)
 	buff := newTask.Run(Data{})
 	fmt.Printf("Ran command.  Buff out is:%v\n", buff.String())
+	//TODO Check result of running and compare
+	t.Logf("Able to set and run task.\n")
+}
+
+func TestGetTaskDetails(t *testing.T) {
+	controller := getNewMapStoreDaoController()
+
+	taskName := "NewTaskName"
+	newTask := NewTask(0, taskName, "NewTaskDescription")
+	err := newTask.SetTaskProcess(`C:\cygwin64\bin\echo.exe`, []string{`some string`})
+	if err != nil {
+		t.Errorf("Could not create new task process.  Error:%v\n", err)
+		log.Fatalf("Test failed with error:%v\n", err)
+	}
+	t.Logf("Created task\n")
+
+	controller.AddTask(*newTask)
+	taskView := (*newTask).CopyView()
+	taskWithDetails := controller.GetTaskDetail(taskView)
+
+	if newTask.Name != taskWithDetails.Name {
+		t.Errorf("Task retrieved is not the expected one. As created '%v' as retrieved '%v'\n",
+			newTask, taskWithDetails)
+	}
+
+	if newTask.Description != taskWithDetails.Description {
+		t.Errorf("Task retrieved is not the expected one. As created '%v' as retrieved '%v'\n",
+			newTask, taskWithDetails)
+	}
 }
