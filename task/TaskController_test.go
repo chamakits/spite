@@ -65,12 +65,7 @@ func TestGetTaskDetails(t *testing.T) {
 	taskView := (*newTask).CopyView()
 	taskWithDetails := controller.GetTaskDetail(taskView)
 
-	if newTask.Name != taskWithDetails.Name {
-		t.Errorf("Task retrieved is not the expected one. As created '%v' as retrieved '%v'\n",
-			newTask, taskWithDetails)
-	}
-
-	if newTask.Description != taskWithDetails.Description {
+	if !newTask.Equals(&taskWithDetails) {
 		t.Errorf("Task retrieved is not the expected one. As created '%v' as retrieved '%v'\n",
 			newTask, taskWithDetails)
 	}
