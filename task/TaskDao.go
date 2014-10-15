@@ -21,6 +21,12 @@ type MapStoreDao struct {
 	Store map[string]*TaskDataRuns
 }
 
+func NewMapStoreDao() *MapStoreDao {
+	return &MapStoreDao{
+		Store: make(map[string]*TaskDataRuns, 0),
+	}
+}
+
 // GetTasksView returns a small view of all the tasks.
 func (dao *MapStoreDao) GetTasksViews() []View {
 	views := make([]View, len(dao.Store))

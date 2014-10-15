@@ -17,7 +17,7 @@ import (
 // https://www.socketloop.com/tutorials/golang-upload-file
 type SpiteService struct {
 	Port           int
-	taskController task.Controller
+	taskController *task.Controller
 }
 
 func (spiteService *SpiteService) Init() {
@@ -36,7 +36,7 @@ func (spiteService *SpiteService) Init() {
 	r.HandleFunc("/api/add-task", acceptCors(addTaskHandler(spiteService)))
 	r.HandleFunc("/api/run-task", acceptCors(runTaskHandler(spiteService)))
 	// TODO need to create a new handler function for showing tasks
-	r.HandleFunc("/api/show-task", acceptCors(runTaskHandler(spiteService)))
+	r.HandleFunc("/api/show-tasks", acceptCors(showTasksHandler(spiteService)))
 
 	spiteService.initHTTP(r)
 
@@ -98,10 +98,24 @@ func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)
 		}
-
+		log.Printf("Task info:%v\n", spiteService.taskController)
+		spiteService.taskController.AddTask(task.Task)
 		log.Printf("Received data:%v\n", task)
 		fmt.Fprintf(response, "Success reply!")
 
+	}
+}
+
+func showTasksHandler(spiteService *SpiteService) http.HandlerFunc {
+	return func(response http.ResponseWriter, req *http.Request) {
+		taskViews := spiteService.taskController.GetTasksViews()
+		b, err := json.Marshal(task.ViewsHTTP{
+			Views: taskViews,
+		})
+		if err != nil {
+			log.Fatalf("Errored out with:%v\n", err)
+		}
+		fmt.Fprintf(response, string(b))
 	}
 }
 
@@ -114,4 +128,6 @@ func helloHandler(spiteService *SpiteService) http.HandlerFunc {
 
 func (spiteService *SpiteService) initImplementedController() {
 	//TODO Fill this out.
+	mapDao := task.NewMapStoreDao()
+	spiteService.taskController = task.NewController(mapDao)
 }
