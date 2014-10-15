@@ -232,6 +232,11 @@ type ViewsHTTP struct {
 	Views []View `json:"taskViews"`
 }
 
+type ViewAndDataHTTP struct {
+	View View `json:"view"`
+	Data Data `json:"data"`
+}
+
 //TaskAndData is used mostly to retrieve the data from the Post request made.
 type TaskAndData struct {
 	Task Task `json:"task"`
