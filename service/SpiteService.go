@@ -37,6 +37,7 @@ func (spiteService *SpiteService) Init() {
 	r.HandleFunc("/api/run-task", acceptCors(runTaskHandler(spiteService)))
 	// TODO need to create a new handler function for showing tasks
 	r.HandleFunc("/api/show-tasks", acceptCors(showTasksHandler(spiteService)))
+	r.HandleFunc("/api/get-task-detail", acceptCors(getTaskDetailHandler(spiteService)))
 
 	spiteService.initHTTP(r)
 
@@ -107,6 +108,29 @@ func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 	}
 }
 
+func getTaskDetailHandler(spiteService *SpiteService) http.HandlerFunc {
+	return func(response http.ResponseWriter, req *http.Request) {
+
+		decoder := json.NewDecoder(req.Body)
+		var view task.ViewHTTP
+		err := decoder.Decode(&view)
+		if err != nil {
+			log.Fatalf("Problem reading content of body:%v\n", err)
+		}
+
+		taskDetail := spiteService.taskController.GetTaskDetail(view.View)
+
+		b, err := json.Marshal(taskDetail)
+
+		if err != nil {
+			log.Fatalf("Errored out with:%v\n", err)
+		}
+		jsonString := string(b)
+		log.Printf("Json string to send:%v\n", jsonString)
+		fmt.Fprintf(response, jsonString)
+
+	}
+}
 func showTasksHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
 		taskViews := spiteService.taskController.GetTasksViews()

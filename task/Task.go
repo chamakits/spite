@@ -227,6 +227,9 @@ func (taskSelf Task) CopyView() View {
 type TaskHTTP struct {
 	Task Task `json:"task"`
 }
+type ViewHTTP struct {
+	View View `json:"view"`
+}
 
 type ViewsHTTP struct {
 	Views []View `json:"taskViews"`
