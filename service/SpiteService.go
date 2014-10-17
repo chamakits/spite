@@ -119,8 +119,10 @@ func getTaskDetailHandler(spiteService *SpiteService) http.HandlerFunc {
 		}
 
 		taskDetail := spiteService.taskController.GetTaskDetail(view.View)
-
-		b, err := json.Marshal(taskDetail)
+		httpTask := task.TaskHTTP{
+			Task: taskDetail,
+		}
+		b, err := json.Marshal(httpTask)
 
 		if err != nil {
 			log.Fatalf("Errored out with:%v\n", err)
