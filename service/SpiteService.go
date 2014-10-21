@@ -80,12 +80,14 @@ func addTaskHandlerSTRING(spiteService *SpiteService) http.HandlerFunc {
 
 func runTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 	return func(response http.ResponseWriter, req *http.Request) {
+		log.Printf("Run task handler.")
 		decoder := json.NewDecoder(req.Body)
 		var viewAndData task.ViewAndDataHTTP
 		err := decoder.Decode(&viewAndData)
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)
 		}
+		log.Printf("Received viewAndData:%v\n", viewAndData)
 		spiteService.taskController.RunTask(viewAndData.View, viewAndData.Data)
 		log.Printf("Received data:%v\n", viewAndData)
 		fmt.Fprintf(response, "Success reply!")

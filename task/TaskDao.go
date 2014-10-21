@@ -1,5 +1,7 @@
 package task
 
+import "log"
+
 // Dao is the interface for all TaskDaos.
 type Dao interface {
 	GetTasksViews() []View
@@ -23,7 +25,7 @@ type MapStoreDao struct {
 
 func NewMapStoreDao() *MapStoreDao {
 	return &MapStoreDao{
-		Store: make(map[string]*TaskDataRuns, 0),
+		Store: make(map[string]*TaskDataRuns),
 	}
 }
 
@@ -39,6 +41,8 @@ func (dao *MapStoreDao) GetTasksViews() []View {
 }
 
 func (dao *MapStoreDao) GetTaskDetail(view View) Task {
+	log.Printf("View to get task detail:%v\n", view)
+	log.Printf("Dao store:%v\n", dao.Store)
 	return dao.Store[view.Name].Task
 }
 

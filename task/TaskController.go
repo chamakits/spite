@@ -1,6 +1,9 @@
 package task
 
-import "time"
+import (
+	"log"
+	"time"
+)
 
 type Controller struct {
 	Dao Dao
@@ -26,6 +29,7 @@ func (taskController *Controller) AddTask(taskIn Task) {
 
 func (taskController *Controller) RunTask(taskView View, data Data) {
 	startTime := time.Now()
+	log.Printf("taskView:%v\n", taskView)
 	taskFound := taskController.GetTaskDetail(taskView)
 	taskFound.Run(data)
 
