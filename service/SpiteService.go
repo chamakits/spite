@@ -102,6 +102,7 @@ func addTaskHandler(spiteService *SpiteService) http.HandlerFunc {
 		if err != nil {
 			log.Fatalf("Problem reading content of body:%v\n", err)
 		}
+		task.Task.SetTaskProcess(task.CommandStr, nil)
 		log.Printf("Task info:%v\n", spiteService.taskController)
 		spiteService.taskController.AddTask(task.Task)
 		log.Printf("Received data:%v\n", task)
@@ -122,7 +123,8 @@ func getTaskDetailHandler(spiteService *SpiteService) http.HandlerFunc {
 
 		taskDetail := spiteService.taskController.GetTaskDetail(view.View)
 		httpTask := task.TaskHTTP{
-			Task: taskDetail,
+			Task:       taskDetail,
+			CommandStr: taskDetail.GetTaskCommandString(),
 		}
 		b, err := json.Marshal(httpTask)
 

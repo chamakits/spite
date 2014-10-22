@@ -182,6 +182,7 @@ func (taskSelf *Task) Equals(taskOther *Task) bool {
 
 // Run method runs the task as specified with the data given.
 func (taskSelf *Task) Run(data Data) bytes.Buffer {
+	log.Printf("Running proc within task.")
 	return taskSelf.proc.runProcess(data)
 }
 
@@ -196,6 +197,7 @@ func NewTask(id int, name, description string) *Task {
 		Schema: Schema{
 			FieldNameToDataType: make(map[string]string, 0),
 		},
+		proc: &process{},
 	}
 	return newTask
 }
@@ -206,6 +208,10 @@ func (selfTask *Task) SetTaskProcess(path string, arguments []string) error {
 	log.Printf("New proc created:%v\n", proc)
 	selfTask.proc = proc
 	return err
+}
+
+func (selfTask *Task) GetTaskCommandString() string {
+	return selfTask.proc.ExecutablePath
 }
 
 // AddSchemaField adds detail to the schema.
@@ -225,7 +231,8 @@ func (taskSelf Task) CopyView() View {
 // TaskHTTP is a 'task' just wrapped as one field to be used by http to send it
 // as json over the wire.
 type TaskHTTP struct {
-	Task Task `json:"task"`
+	Task       Task   `json:"task"`
+	CommandStr string `json:"commandString"`
 }
 type ViewHTTP struct {
 	View View `json:"view"`
